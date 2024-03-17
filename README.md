@@ -1,6 +1,6 @@
 #### Introduction
 
-This is the official codebase of our paper: [From Language Modeling to Instruction Following: Understanding the Behavior Shift in LLMs after Instruction Tuning](https://arxiv.org/abs/2310.00492). In this repo, we implement several explanation methods for LLMs, including a gradient-based attribution method, a word-activation-based method for Self-Attention layers, and a weight decomposition method for Feedforward layers. We also provide the analysis scripts to use the explanations to understand the behavior shifts of LLMs after instruction tuning. Currently, this repo also includes the generated explanations for Vicuna-7b-v1.1 and LLaMA-7b. The explanations for other families will be coming soon, such as Mistral.
+This is the official codebase of our paper: [From Language Modeling to Instruction Following: Understanding the Behavior Shift in LLMs after Instruction Tuning](https://arxiv.org/abs/2310.00492). In this repo, we implement several explanation methods for LLMs, including a gradient-based attribution method, a word-activation-based method for Self-Attention layers, and a weight decomposition method for Feedforward layers. We also provide the analysis scripts to use the explanations to understand the behavior shifts of LLMs after instruction tuning. This repo also includes the generated explanations for Vicuna-7b-v1.1 and LLaMA-7b. The explanations for other families, such as Mistral, will be coming soon.
 
 #### Environment
 
@@ -15,9 +15,9 @@ We assume that you manage the environment with Conda library.
 
 #### Explanation Methods
 
-The three explanation methods for our experiments are implemented as three functions of the class `Generator` from the file `./src/generator.py`. Our implementations could be easily extended to other language model families that are available from Huggingface `transformers` library.
+The three explanation methods for our experiments are implemented as three functions of the class `Generator` from the file `./src/generator.py`. Our implementations could be easily extended to other language model families that are available from the Huggingface `transformers` library.
 
-* __Input-Output Attribution:__ `Generator.input_explain()` is a local explanation method, which measures the contribution of each input token to the output token(s) normalized and sparsified with the strategy proposed in the paper. _Our latest project shows that this attribution explanations can be used to detect hallucination responses or verify the response quality!!!_ See details at [here](https://github.com/JacksonWuxs/UsableXAI_LLM).
+* __Input-Output Attribution:__ `Generator.input_explain()` is a local explanation method, which measures the contribution of each input token to the output token(s) normalized and sparsified with the strategy proposed in the paper. _Our latest project shows that this attribution method can be used to detect hallucination responses or verify the response quality!!!_ See details at [here](https://github.com/JacksonWuxs/UsableXAI_LLM).
 * __Self-Attention Pattern Explain:__ ``Generator.att_explain()`` is a global explanation method, which finds the word-word pairwise patterns to interpret the behavior of each self-attention head under the "local co-occurrence" constraints. 
 * __Feedforward Concept Explain:__ ``Generator.ffn_explain()`` is a global explanation method, which analyze the spread of vectors in the feedforward layer by using the Principal Component Analysis (PCA). The main spreading directions (principal components) are then projected to the static word embeddings to achieve concept-level explanations. 
 
@@ -25,11 +25,11 @@ We also include a script to parallelly call ChatGPT APIs for machine annotations
 
 #### Explanation Results
 
-We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder `./results/`. We are running experiments on Mistral family and we will update the results within the weeks. 
+We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder `./results/`. We are running experiments on the Mistral family, and we will update the results within the weeks. 
 
 * __Attribution Explanations:__ Folder`./results/attribution_interpret/ifa_vicuna_7b/` includes 632 cases for Vicuna-7B and folder `./results/attribution_interpret/ifa_llama_7b/` is for LLaMA-7B.
 * __Self-Attention Pattern Explanations:__ The results of both models are expected in ONE `.tsv` file in a format of ``Model\tSize\tLayer\tType\tHead\tDim\tRank\tScore\tTopK``, where TopK is a list of word pairs to interpret this dimension of the head. Each word pair looks like `word_1=word_2`, and word pairs are separated with symbol `|||`. We break the whole file into smaller ones to match the Github requirement. To reconstruct the result file, you need to run ``cat bilinear_words_split.tsv* > bilinear_words.tsv`` in the folder `./results/bilinear_interpret/`. 
-* __Feedforward Concept Explanations:__ The original result of both models is in the file `./results/linear_interpret/linear_words.tsv` in a format of `Model\tSize\tLayer\tType\tHead\tRank\tScore\tTopK`, where TopK is a list of words (separated with `|||`) to interpret the corresponding principal component. We also include the ChatGPT annotate data with different seed in the same folder. 
+* __Feedforward Concept Explanations:__ The original result of both models is in the file `./results/linear_interpret/linear_words.tsv` in a format of `Model\tSize\tLayer\tType\tHead\tRank\tScore\tTopK`, where TopK is a list of words (separated with `|||`) to interpret the corresponding principal component. We also include the ChatGPT annotated data with different seeds in the same folder. 
 
 #### Reproduction
 
@@ -91,7 +91,7 @@ We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder 
   >>> nohup python -u run_linear_explain.py --vocab ../datasets/SingleShareGPT_Vocab.tsv --model llama --output ../results/linear_interpret/linear_words.tsv --cuda 0,1 &
   ```
 
-  We then leverage ChatGPT to annotate the linguistic level and suitable tasks for each concept according to the word lists. This process involves two wo steps: (1) generating concept description according to the word lists, and (2) classifying linguistic knowledge or suitable tasks according to the concepts. We will conduct this process over 5 random seeds.  Please input your own OpenAI API Token in `run_chatgpt_annotate.py` file. _(You don't have to run this code for reproduction since we have included results in this repo.)_
+  We then leverage ChatGPT to annotate the linguistic level and suitable tasks for each concept according to the word lists. This process involves two steps: (1) generating concept descriptions according to the word lists and (2) classifying linguistic knowledge or suitable tasks according to the concepts.  Please input your own OpenAI API Token in `run_chatgpt_annotate.py` file. _(You don't have to run this code for reproduction since we have included results in this repo.)_
 
   ```shell
   # running seeds 0, 1, 2, 3, 4
@@ -103,7 +103,7 @@ We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder 
   >>> nohup python run_chatgpt_annotate.py 4
   ```
 
-  Now, we can check the change of linguistic disciplines or suitable tasks after instruction tuning.
+  Now, we can check for changes in linguistic disciplines or suitable tasks after instruction tuning.
 
   ```shell
   >>> python analysis_linear_interpret.py ../results/linear_interpret/linear_
