@@ -15,7 +15,7 @@ We assume that you manage the environment with Conda library.
 
 #### Explanation Methods
 
-The three explanation methods for our experiments are implemented as three functions of the class `Generator` from the file `./src/generator.py`. 
+The three explanation methods for our experiments are implemented as three functions of the class `Generator` from the file `./src/generator.py`. Our implementations could be easily extended to other language model families that are available from Huggingface `transformers` library.
 
 * __Input-Output Attribution:__ `Generator.input_explain()` is a local explanation method, which measures the contribution of each input token to the output token(s) normalized and sparsified with the strategy proposed in the paper. _Our latest project shows that this attribution explanations can be used to detect hallucination responses or verify the response quality!!!_ See details at [here](https://github.com/JacksonWuxs/UsableXAI_LLM).
 * __Self-Attention Pattern Explain:__ ``Generator.att_explain()`` is a global explanation method, which finds the word-word pairwise patterns to interpret the behavior of each self-attention head under the "local co-occurrence" constraints. 
@@ -25,7 +25,7 @@ We also include a script to parallelly call ChatGPT APIs for machine annotations
 
 #### Explanation Results
 
-We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder `./results/`. We will extend our experiments on Mistral family and include the results within the weeks. 
+We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder `./results/`. We are running experiments on Mistral family and we will update the results within the weeks. 
 
 * __Attribution Explanations:__ Folder`./results/attribution_interpret/ifa_vicuna_7b/` includes 632 cases for Vicuna-7B and folder `./results/attribution_interpret/ifa_llama_7b/` is for LLaMA-7B.
 * __Self-Attention Pattern Explanations:__ The results of both models are expected in ONE `.tsv` file in a format of ``Model\tSize\tLayer\tType\tHead\tDim\tRank\tScore\tTopK``, where TopK is a list of word pairs to interpret this dimension of the head. Each word pair looks like `word_1=word_2`, and word pairs are separated with symbol `|||`. We break the whole file into smaller ones to match the Github requirement. To reconstruct the result file, you need to run ``cat bilinear_words_split.tsv* > bilinear_words.tsv`` in the folder `./results/bilinear_interpret/`. 
@@ -113,7 +113,7 @@ We include the explanation results of Vicuna-7b-v1.1 and LLaMA-7b in the folder 
 
 #### Citations
 
-If you use our code or data from this repo, please cite our paper as followed.
+If you use code or data from this repo, please cite our paper as followed.
 
 ```latex
 @article{wu2023language,
