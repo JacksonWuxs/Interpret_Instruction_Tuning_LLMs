@@ -7,8 +7,8 @@ This is the official codebase of our paper: [From Language Modeling to Instructi
 We assume that you manage the environment with Conda library.
 
 ```shell
->>> conda create -n UsableXAI python=3.9 -y
->>> conda activate UsableXAI
+>>> conda create -n IIFT python=3.9 -y
+>>> conda activate IIFT
 >>> pip install -U requirements.txt
 >>> cd src
 ```
